@@ -5,10 +5,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('core.api.urls'))
 ]
 
-if settings.DEBUG:
-    urlpatterns = [
-        path('admin/', admin.site.urls),
-    ] + debug_toolbar_urls()
-
+# if settings.DEBUG:
+#     urlpatterns += debug_toolbar_urls()
