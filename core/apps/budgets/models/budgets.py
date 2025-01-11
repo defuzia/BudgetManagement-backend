@@ -43,7 +43,7 @@ class Budget(TimestampedBaseModel):
         verbose_name=_('Budget name'),
         max_length=255
     )
-    amount = models.DecimalField(
+    initial_amount = models.DecimalField(
         verbose_name=_('Budget amount'),
         max_digits=11,
         decimal_places=2,
@@ -68,7 +68,7 @@ class Budget(TimestampedBaseModel):
             created_at=self.created_at,
             updated_at=self.updated_at,
             title=self.title,
-            amount=self.amount,
+            initial_amount=self.initial_amount,
             related_currency=self.related_currency.to_entity(),
             related_user=self.related_user
         )

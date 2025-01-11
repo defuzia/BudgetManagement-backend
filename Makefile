@@ -47,3 +47,8 @@ createsuperuser:
 .PHONY: collectstatic
 collectstatic:
 	${EXEC} ${APP_CONTAINER} ${MANAGE} collectstatic
+
+.PHONY: run-tests
+run-tests:
+	${EXEC} ${APP_CONTAINER} pytest --ds=core.project.settings.local
+

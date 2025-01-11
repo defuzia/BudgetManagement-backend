@@ -71,7 +71,7 @@ class BaseBudgetService(ABC):
     def create_budget(
         self,
         title: str,
-        amount: Decimal,
+        initial_amount: Optional[Decimal],
         related_currency_short_name: Optional[str],
         related_user: UUID
     ) -> Budget:
@@ -86,8 +86,7 @@ class BaseBudgetService(ABC):
         self,
         budget_id: int,
         title: Optional[str],
-        related_currency_short_name: Optional[str],
-        amount: Optional[Decimal]
+        initial_amount: Optional[Decimal]
     ) -> Budget:
         ...
 
@@ -118,7 +117,7 @@ class ORMBudgetService(BaseBudgetService):
     def create_budget(
             self,
             title: str,
-            amount: Optional[Decimal],
+            initial_amount: Optional[Decimal],
             related_currency_short_name: Optional[str],
             related_user: UUID
     ) -> Budget:
@@ -129,7 +128,7 @@ class ORMBudgetService(BaseBudgetService):
 
         budget = BudgetModel.objects.create(
             title=title,
-            amount=amount,
+            initial_amount=initial_amount,
             related_currency=related_currency,
             related_user=related_user
         )
@@ -142,20 +141,15 @@ class ORMBudgetService(BaseBudgetService):
             self,
             budget_id: int,
             title: Optional[str],
-            related_currency_short_name: Optional[str],
-            amount: Optional[Decimal]
+            initial_amount: Optional[Decimal]
     ) -> Budget:
         budget = BudgetModel.objects.get(id=budget_id)
 
         if title is not None:
             budget.title = title
 
-        if related_currency_short_name is not None:
-            related_currency = CurrencyModel.objects.get(short_name__iexact=related_currency_short_name)
-            budget.related_currency = related_currency
-
-        if amount is not None:
-            budget.amount = amount
+        if initial_amount is not None:
+            budget.initial_amount = initial_amount
 
         budget.save()
         return budget.to_entity()

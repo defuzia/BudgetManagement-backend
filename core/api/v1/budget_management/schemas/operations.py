@@ -21,6 +21,14 @@ class CategorySchema(Schema):
         )
 
 
+class CreateOperationSchema(Schema):
+    title: Optional[str]
+    operation_type: str
+    amount: Decimal
+    related_budget_id: int
+    related_category_id: int
+
+
 class OperationSchema(Schema):
     id: int
     created_at: datetime
@@ -45,17 +53,13 @@ class OperationSchema(Schema):
         )
 
 
-class CreateOperationSchema(Schema):
-    title: Optional[str]
-    operation_type: str
-    amount: Decimal
-    related_budget_id: int
-    related_category_id: int
-
-
 class UpdateOperationSchema(Schema):
     title: Optional[str] = None
     operation_type: Optional[str] = None
     amount: Optional[Decimal] = None
     related_budget_id: Optional[int] = None
     related_category_id: Optional[int] = None
+
+
+class DeleteOperationSchema(Schema):
+    message: str

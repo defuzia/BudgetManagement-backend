@@ -10,7 +10,7 @@ class CurrencyAdmin(admin.ModelAdmin):
 
 @admin.register(Budget)
 class BudgetAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'amount', 'related_currency', 'related_user')
+    list_display = ('id', 'title', 'initial_amount', 'related_currency', 'related_user')
 
 
 @admin.register(Category)

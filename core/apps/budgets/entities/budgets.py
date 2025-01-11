@@ -18,7 +18,7 @@ class Budget:
     created_at: datetime
     updated_at: datetime
     title: str
-    amount: Decimal
+    initial_amount: Decimal
     related_currency: Currency
     related_user: UUID
 

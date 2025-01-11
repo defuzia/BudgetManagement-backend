@@ -24,12 +24,19 @@ class CurrencySchema(Schema):
         )
 
 
+class CreateBudgetSchema(Schema):
+    title: str
+    initial_amount: Optional[Decimal]
+    related_currency_short_name: Optional[str]
+    related_user: UUID
+
+
 class BudgetSchema(Schema):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
     title: str
-    amount: Decimal
+    initial_amount: Decimal
     related_currency: CurrencyEntity
     related_user: UUID
 
@@ -40,20 +47,16 @@ class BudgetSchema(Schema):
             created_at=entity.created_at,
             updated_at=entity.updated_at,
             title=entity.title,
-            amount=entity.amount,
+            initial_amount=entity.initial_amount,
             related_currency=entity.related_currency,
             related_user=entity.related_user
         )
 
 
-class CreateBudgetSchema(Schema):
-    title: str
-    amount: Optional[Decimal]
-    related_currency_short_name: Optional[str]
-    related_user: UUID
-
-
 class UpdateBudgetSchema(Schema):
     title: Optional[str] = None
-    related_currency_short_name: Optional[str] = None
-    amount: Optional[Decimal] = None
+    initial_amount: Optional[Decimal] = None
+
+
+class DeleteBudgetSchema(Schema):
+    message: str
