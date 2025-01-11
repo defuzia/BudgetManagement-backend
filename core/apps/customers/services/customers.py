@@ -39,4 +39,3 @@ class ORMCustomerService(BaseCustomerService):
             token=generated_token
         )
         return generated_token
-
