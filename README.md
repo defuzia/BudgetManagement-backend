@@ -81,6 +81,7 @@ This repository contains the backend services for a budget management applicatio
 
 ### General
 - `GET /api/ping`: Ping a server.
+- `GET /api/docs`: Go to OpenAPI generated documentation.
 
 ### Authentication
 - `POST /api/v1/customers/auth`: Register a new user and send code to phone number.
