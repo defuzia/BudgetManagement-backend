@@ -28,7 +28,7 @@ class CategorySchema(Schema):
 
 
 class UpdateCategorySchema(Schema):
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 class DeleteCategorySchema(Schema):
@@ -39,7 +39,7 @@ class CreateOperationSchema(Schema):
     title: Optional[str]
     operation_type: str
     amount: Decimal
-    related_category_id: Optional[int]
+    related_category_id: Optional[int] = None
     related_budget_id: int
 
 
@@ -51,7 +51,7 @@ class OperationSchema(Schema):
     operation_type: str
     amount: Decimal
     related_budget: BudgetEntity
-    related_category: Optional[CategoryEntity]
+    related_category: Optional[CategoryEntity] = None
 
     @staticmethod
     def from_entity(entity: OperationEntity) -> 'OperationSchema':

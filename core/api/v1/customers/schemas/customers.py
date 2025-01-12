@@ -1,9 +1,11 @@
+from typing import Optional
+
 from ninja import Schema
 
 
 class AuthInSchema(Schema):
     phone: str
-    username: str
+    username: Optional[str] = None
 
 
 class AuthOutSchema(Schema):
