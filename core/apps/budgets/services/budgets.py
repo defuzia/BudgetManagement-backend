@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from decimal import Decimal
 from typing import Iterable, Optional
-from uuid import UUID
 
 from django.db.models import Q
 
@@ -14,6 +13,7 @@ from core.apps.budgets.models.budgets import (
     Currency as CurrencyModel,
     Budget as BudgetModel,
 )
+from core.apps.customers.entities.customers import Customer
 
 
 class BaseCurrencyService(ABC):
@@ -56,15 +56,20 @@ class ORMCurrencyService(BaseCurrencyService):
 
 class BaseBudgetService(ABC):
     @abstractmethod
-    def get_budget_list(self, filters: BudgetFilters, pagination: PaginationIn) -> Iterable[Budget]:
+    def get_budget_list(
+            self,
+            filters: BudgetFilters,
+            pagination: PaginationIn,
+            related_customer: Customer
+    ) -> Iterable[Budget]:
         ...
 
     @abstractmethod
-    def get_budget_count(self, filters: BudgetFilters) -> int:
+    def get_budget_count(self, filters: BudgetFilters, related_customer: Customer) -> int:
         ...
 
     @abstractmethod
-    def get_budget_by_id(self, budget_id: int) -> Budget:
+    def get_budget_by_id(self, budget_id: int, related_customer: Customer) -> Budget:
         ...
 
     @abstractmethod
@@ -73,12 +78,12 @@ class BaseBudgetService(ABC):
         title: str,
         initial_amount: Optional[Decimal],
         related_currency_short_name: Optional[str],
-        related_user: UUID
+        related_customer: Customer
     ) -> Budget:
         ...
 
     @abstractmethod
-    def delete_budget(self, budget_id: int) -> None:
+    def delete_budget(self, budget_id: int, related_customer: Customer) -> None:
         ...
 
     @abstractmethod
@@ -86,7 +91,8 @@ class BaseBudgetService(ABC):
         self,
         budget_id: int,
         title: Optional[str],
-        initial_amount: Optional[Decimal]
+        initial_amount: Optional[Decimal],
+        related_customer: Customer
     ) -> Budget:
         ...
 
@@ -100,26 +106,33 @@ class ORMBudgetService(BaseBudgetService):
 
         return query
 
-    def get_budget_list(self, filters: BudgetFilters, pagination: PaginationIn) -> Iterable[Budget]:
+    def get_budget_list(
+            self,
+            filters: BudgetFilters,
+            pagination: PaginationIn,
+            related_customer: Customer
+    ) -> Iterable[Budget]:
         query = self._build_budget_query(filters)
-        qs = BudgetModel.objects.filter(query)[pagination.offset:pagination.offset + pagination.limit]
+        qs = BudgetModel.objects.filter(related_customer_id=related_customer.id).filter(query)[
+             pagination.offset:pagination.offset + pagination.limit
+        ]
 
         return [budget.to_entity() for budget in qs]
 
-    def get_budget_count(self, filters: BudgetFilters) -> int:
+    def get_budget_count(self, filters: BudgetFilters, related_customer: Customer) -> int:
         query = self._build_budget_query(filters)
 
-        return BudgetModel.objects.filter(query).count()
+        return BudgetModel.objects.filter(related_customer_id=related_customer.id).filter(query).count()
 
-    def get_budget_by_id(self, budget_id: int) -> Budget:
-        return BudgetModel.objects.get(id=budget_id).to_entity()
+    def get_budget_by_id(self, budget_id: int, related_customer: Customer) -> Budget:
+        return BudgetModel.objects.filter(related_customer_id=related_customer.id).get(id=budget_id).to_entity()
 
     def create_budget(
             self,
             title: str,
             initial_amount: Optional[Decimal],
             related_currency_short_name: Optional[str],
-            related_user: UUID
+            related_customer: Customer
     ) -> Budget:
         if related_currency_short_name:
             related_currency = CurrencyModel.objects.get(short_name=related_currency_short_name)
@@ -130,20 +143,21 @@ class ORMBudgetService(BaseBudgetService):
             title=title,
             initial_amount=initial_amount,
             related_currency=related_currency,
-            related_user=related_user
+            related_customer=related_customer.id
         )
         return budget.to_entity()
 
-    def delete_budget(self, budget_id: int) -> None:
-        BudgetModel.objects.get(id=budget_id).delete()
+    def delete_budget(self, budget_id: int, related_customer: Customer) -> None:
+        BudgetModel.objects.filter(related_customer_id=related_customer.id).get(id=budget_id).delete()
 
     def update_budget(
             self,
             budget_id: int,
             title: Optional[str],
-            initial_amount: Optional[Decimal]
+            initial_amount: Optional[Decimal],
+            related_customer: Customer
     ) -> Budget:
-        budget = BudgetModel.objects.get(id=budget_id)
+        budget = BudgetModel.objects.filter(related_customer_id=related_customer.id).get(id=budget_id)
 
         if title is not None:
             budget.title = title

@@ -11,7 +11,7 @@ class BaseCustomerService(ABC):
         ...
 
     @abstractmethod
-    def get_or_create(self, phone: str) -> CustomerEntity:
+    def get_or_create(self, phone: str, username: str) -> CustomerEntity:
         ...
 
     @abstractmethod
@@ -28,8 +28,8 @@ class ORMCustomerService(BaseCustomerService):
 
         return customer_dto.to_entity()
 
-    def get_or_create(self, phone: str) -> CustomerEntity:
-        customer_dto, _ = CustomerModel.objects.get_or_create(phone=phone)
+    def get_or_create(self, phone: str, username: str) -> CustomerEntity:
+        customer_dto, _ = CustomerModel.objects.get_or_create(phone=phone, defaults={'username': username})
 
         return customer_dto.to_entity()
 

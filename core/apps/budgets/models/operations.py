@@ -4,18 +4,26 @@ from django.utils.translation import gettext_lazy as _
 from core.apps.budgets.models import Budget
 from core.apps.common.models import TimestampedBaseModel
 from core.apps.budgets.entities.operations import Category as CategoryEntity, Operation as OperationEntity
+from core.apps.customers.models import Customer
 
 
 class Category(models.Model):
     name = models.CharField(
         verbose_name=_('Category name'),
-        max_length=255
+        max_length=255,
+    )
+    related_customer = models.ForeignKey(
+        verbose_name=_('Related user id'),
+        to=Customer,
+        on_delete=models.CASCADE,
+        related_name='categories',
     )
 
     def to_entity(self) -> CategoryEntity:
         return CategoryEntity(
             id=self.id,
-            name=self.name
+            name=self.name,
+            related_customer=self.related_customer.to_entity(),
         )
 
     def __str__(self):
@@ -34,7 +42,7 @@ class Operation(TimestampedBaseModel):
     title = models.CharField(
         verbose_name=_('Operation name'),
         max_length=124,
-        blank=True
+        blank=True,
     )
     operation_type = models.CharField(
         verbose_name=_('Operation type'),
@@ -45,20 +53,20 @@ class Operation(TimestampedBaseModel):
     amount = models.DecimalField(
         verbose_name=_('Operation amount'),
         max_digits=11,
-        decimal_places=2
+        decimal_places=2,
     )
     related_budget = models.ForeignKey(
         verbose_name=_('Related budget'),
         to=Budget,
         on_delete=models.CASCADE,
-        related_name='operations'
+        related_name='operations',
     )
     related_category = models.ForeignKey(
         verbose_name=_('Related category'),
         to=Category,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='operations'
+        related_name='operations',
     )
 
     def to_entity(self) -> OperationEntity:
@@ -70,7 +78,7 @@ class Operation(TimestampedBaseModel):
             operation_type=self.operation_type,
             amount=self.amount,
             related_budget=self.related_budget.to_entity(),
-            related_category=self.related_category.to_entity()
+            related_category=self.related_category.to_entity(),
         )
 
     def __str__(self):

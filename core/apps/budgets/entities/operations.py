@@ -3,12 +3,14 @@ from datetime import datetime
 from decimal import Decimal
 
 from core.apps.budgets.entities.budgets import Budget
+from core.apps.customers.entities.customers import Customer
 
 
 @dataclass
 class Category:
     id: int
     name: str
+    related_customer: Customer
 
 
 @dataclass

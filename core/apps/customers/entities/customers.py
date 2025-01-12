@@ -7,6 +7,5 @@ class Customer:
     id: int
     created_at: datetime
     updated_at: datetime
+    username: str
     phone: str
-
-

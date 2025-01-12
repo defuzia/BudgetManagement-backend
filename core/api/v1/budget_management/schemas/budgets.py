@@ -1,11 +1,11 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
-from uuid import UUID
 
 from ninja import Schema
 
 from core.apps.budgets.entities.budgets import Currency as CurrencyEntity, Budget as BudgetEntity
+from core.apps.customers.entities.customers import Customer as CustomerEntity
 
 
 class CurrencySchema(Schema):
@@ -20,7 +20,7 @@ class CurrencySchema(Schema):
             id=entity.id,
             name=entity.name,
             short_name=entity.short_name,
-            symbol=entity.symbol
+            symbol=entity.symbol,
         )
 
 
@@ -28,7 +28,6 @@ class CreateBudgetSchema(Schema):
     title: str
     initial_amount: Optional[Decimal]
     related_currency_short_name: Optional[str]
-    related_user: UUID
 
 
 class BudgetSchema(Schema):
@@ -38,7 +37,7 @@ class BudgetSchema(Schema):
     title: str
     initial_amount: Decimal
     related_currency: CurrencyEntity
-    related_user: UUID
+    related_customer: CustomerEntity
 
     @staticmethod
     def from_entity(entity: BudgetEntity) -> 'BudgetSchema':
@@ -49,7 +48,7 @@ class BudgetSchema(Schema):
             title=entity.title,
             initial_amount=entity.initial_amount,
             related_currency=entity.related_currency,
-            related_user=entity.related_user
+            related_customer=entity.related_customer
         )
 
 

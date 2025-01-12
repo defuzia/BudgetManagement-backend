@@ -1,6 +1,7 @@
 annotated-types==0.7.0
 asgiref==3.8.1
 Django==5.1.4
+django-cors-headers==4.6.0
 django-debug-toolbar==4.4.6
 django-environ==0.11.2
 django-extensions==3.2.3
@@ -11,6 +12,7 @@ iniconfig==2.0.0
 packaging==24.2
 pluggy==1.5.0
 psycopg2-binary==2.9.10
+punq==0.7.0
 pydantic==2.10.4
 pydantic_core==2.27.2
 pytest==8.3.4

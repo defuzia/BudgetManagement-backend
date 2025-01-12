@@ -5,12 +5,13 @@ from django.utils.translation import gettext_lazy as _
 
 from core.apps.common.models import TimestampedBaseModel
 from core.apps.budgets.entities.budgets import Currency as CurrencyEntity, Budget as BudgetEntity
+from core.apps.customers.models import Customer
 
 
 class Currency(models.Model):
     name = models.CharField(
         verbose_name=_('Currency name'),
-        max_length=124
+        max_length=124,
     )
     short_name = models.CharField(
         verbose_name=_('Currency short name'),
@@ -27,7 +28,7 @@ class Currency(models.Model):
             id=self.id,
             name=self.name,
             short_name=self.short_name,
-            symbol=self.symbol
+            symbol=self.symbol,
         )
 
     def __str__(self):
@@ -41,14 +42,14 @@ class Currency(models.Model):
 class Budget(TimestampedBaseModel):
     title = models.CharField(
         verbose_name=_('Budget name'),
-        max_length=255
+        max_length=255,
     )
     initial_amount = models.DecimalField(
         verbose_name=_('Budget amount'),
         max_digits=11,
         decimal_places=2,
         default=Decimal('0'),
-        blank=True
+        blank=True,
     )
     related_currency = models.ForeignKey(
         verbose_name=_('Related currency'),
@@ -56,10 +57,13 @@ class Budget(TimestampedBaseModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='budgets'
+        related_name='budgets',
     )
-    related_user = models.UUIDField(
-        verbose_name=_('Related user id')
+    related_customer = models.ForeignKey(
+        verbose_name=_('Related customer'),
+        to=Customer,
+        on_delete=models.CASCADE,
+        related_name='budgets',
     )
 
     def to_entity(self) -> BudgetEntity:
@@ -70,7 +74,7 @@ class Budget(TimestampedBaseModel):
             title=self.title,
             initial_amount=self.initial_amount,
             related_currency=self.related_currency.to_entity(),
-            related_user=self.related_user
+            related_customer=self.related_customer.to_entity(),
         )
 
     def __str__(self):

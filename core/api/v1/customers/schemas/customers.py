@@ -3,6 +3,7 @@ from ninja import Schema
 
 class AuthInSchema(Schema):
     phone: str
+    username: str
 
 
 class AuthOutSchema(Schema):

@@ -9,6 +9,10 @@ from core.apps.customers.entities.customers import Customer as CustomerEntity
 
 
 class Customer(TimestampedBaseModel):
+    username = models.CharField(
+        verbose_name=_("Username"),
+        max_length=255,
+    )
     phone = models.CharField(
         verbose_name=_('Phone number'),
         max_length=20,
@@ -26,7 +30,8 @@ class Customer(TimestampedBaseModel):
             id=self.id,
             created_at=self.created_at,
             updated_at=self.updated_at,
-            phone=self.phone
+            username=self.username,
+            phone=self.phone,
         )
 
     def __str__(self):
@@ -35,4 +40,3 @@ class Customer(TimestampedBaseModel):
     class Meta:
         verbose_name = _('Customer')
         verbose_name_plural = _('Customers')
-

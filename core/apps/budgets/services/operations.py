@@ -13,19 +13,46 @@ from core.apps.budgets.models.operations import (
     Operation as OperationModel,
     Budget as BudgetModel,
 )
+from core.apps.customers.entities.customers import Customer
 
 
 class BaseCategoryService(ABC):
     @abstractmethod
-    def get_category_list(self, filters: CategoryFilters, pagination: PaginationIn) -> Iterable[Category]:
+    def get_category_list(
+            self,
+            filters: CategoryFilters,
+            pagination: PaginationIn,
+            related_customer: Customer
+    ) -> Iterable[Category]:
         ...
 
     @abstractmethod
-    def get_category_count(self, filters: CategoryFilters) -> int:
+    def get_category_count(self, filters: CategoryFilters, related_customer: Customer) -> int:
         ...
 
     @abstractmethod
-    def get_category_by_id(self, category_id: int) -> Category:
+    def get_category_by_id(self, category_id: int, related_customer: Customer) -> Category:
+        ...
+
+    @abstractmethod
+    def create_category(
+            self,
+            name: str,
+            related_customer: Customer
+    ) -> Category:
+        ...
+
+    @abstractmethod
+    def delete_category(self, category_id: int, related_customer: Customer) -> None:
+        ...
+
+    @abstractmethod
+    def update_category(
+            self,
+            category_id: int,
+            name: Optional[str],
+            related_customer: Customer
+    ) -> Category:
         ...
 
 
@@ -38,58 +65,89 @@ class ORMCategoryService(BaseCategoryService):
 
         return query
 
-    def get_category_list(self, filters: CategoryFilters, pagination: PaginationIn) -> Iterable[Category]:
+    def get_category_list(
+            self,
+            filters: CategoryFilters,
+            pagination: PaginationIn,
+            related_customer: Customer
+    ) -> Iterable[Category]:
         query = self._build_category_query(filters)
-        qs = CategoryModel.objects.filter(query)[pagination.offset:pagination.offset + pagination.limit]
+        qs = CategoryModel.objects.filter(related_customer_id=related_customer.id).filter(query)[
+             pagination.offset:pagination.offset + pagination.limit
+        ]
 
         return [category.to_entity() for category in qs]
 
-    def get_category_count(self, filters: CategoryFilters) -> int:
+    def get_category_count(self, filters: CategoryFilters, related_customer: Customer) -> int:
         query = self._build_category_query(filters)
 
-        return CategoryModel.objects.filter(query).count()
+        return CategoryModel.objects.filter(related_customer_id=related_customer.id).filter(query).count()
 
-    def get_category_by_id(self, category_id: int) -> Category:
-        return CategoryModel.objects.get(id=category_id).to_entity()
+    def get_category_by_id(self, category_id: int, related_customer: Customer) -> Category:
+        return CategoryModel.objects.filter(related_customer_id=related_customer.id).get(id=category_id).to_entity()
+
+    def create_category(
+            self,
+            name: str,
+            related_customer: Customer
+    ) -> Category:
+        return Category(name=name, related_customer=related_customer)
+
+    def delete_category(self, category_id: int, related_customer: Customer) -> None:
+        CategoryModel.objects.filter(related_customer_id=related_customer.id).get(id=category_id).delete()
+
+    def update_category(
+            self,
+            category_id: int,
+            name: Optional[str],
+            related_customer: Customer
+    ) -> Category:
+        return Category(id=category_id, name=name, related_customer=related_customer)
 
 
 class BaseOperationService(ABC):
     @abstractmethod
-    def get_operation_list(self, filters: OperationFilters, pagination: PaginationIn) -> Iterable[Operation]:
+    def get_operation_list(
+            self,
+            filters: OperationFilters,
+            pagination: PaginationIn,
+            related_customer: Customer
+    ) -> Iterable[Operation]:
         ...
 
     @abstractmethod
-    def get_operation_count(self, filters: OperationFilters) -> int:
+    def get_operation_count(self, filters: OperationFilters, related_customer: Customer) -> int:
         ...
 
     @abstractmethod
-    def get_operation_by_id(self, operation_id: int) -> Operation:
+    def get_operation_by_id(self, operation_id: int, related_customer: Customer) -> Operation:
         ...
 
     @abstractmethod
     def create_operation(
-        self,
-        title: Optional[str],
-        operation_type: str,
-        amount: Decimal,
-        related_budget_id: int,
-        related_category_id: int
+            self,
+            title: Optional[str],
+            operation_type: str,
+            amount: Decimal,
+            related_budget_id: int,
+            related_category_id: int,
+            related_customer: Customer
     ) -> Operation:
         ...
 
     @abstractmethod
-    def delete_operation(self, operation_id: int) -> None:
+    def delete_operation(self, operation_id: int, related_customer: Customer) -> None:
         ...
 
     @abstractmethod
     def update_operation(
-        self,
-        operation_id: int,
-        title: Optional[str],
-        operation_type: Optional[str],
-        amount: Optional[Decimal],
-        related_budget_id: Optional[int],
-        related_category_id: Optional[int]
+            self,
+            operation_id: int,
+            title: Optional[str],
+            operation_type: Optional[str],
+            amount: Optional[Decimal],
+            related_category_id: Optional[int],
+            related_customer: Customer
     ) -> Operation:
         ...
 
@@ -106,30 +164,38 @@ class ORMOperationService(BaseOperationService):
 
         return query
 
-    def get_operation_list(self, filters: OperationFilters, pagination: PaginationIn) -> Iterable[Operation]:
+    def get_operation_list(
+            self,
+            filters: OperationFilters,
+            pagination: PaginationIn,
+            related_customer: Customer
+    ) -> Iterable[Operation]:
         query = self._build_operation_query(filters)
-        qs = OperationModel.objects.filter(query)[pagination.offset:pagination.offset + pagination.limit]
+        qs = OperationModel.objects.filter(related_customer_id=related_customer.id).filter(query)[
+             pagination.offset:pagination.offset + pagination.limit
+        ]
 
         return [operation.to_entity() for operation in qs]
 
-    def get_operation_count(self, filters: OperationFilters) -> int:
+    def get_operation_count(self, filters: OperationFilters, related_customer: Customer) -> int:
         query = self._build_operation_query(filters)
 
-        return OperationModel.objects.filter(query).count()
+        return OperationModel.objects.filter(related_customer_id=related_customer.id).filter(query).count()
 
-    def get_operation_by_id(self, operation_id: int) -> Operation:
-        return OperationModel.objects.get(id=operation_id).to_entity()
+    def get_operation_by_id(self, operation_id: int, related_customer: Customer) -> Operation:
+        return OperationModel.objects.filter(related_customer_id=related_customer.id).get(id=operation_id).to_entity()
 
     def create_operation(
-        self,
-        title: Optional[str],
-        operation_type: str,
-        amount: Decimal,
-        related_budget_id: int,
-        related_category_id: int
+            self,
+            title: Optional[str],
+            operation_type: str,
+            amount: Decimal,
+            related_budget_id: int,
+            related_category_id: int,
+            related_customer: Customer
     ) -> Operation:
-        related_budget = BudgetModel.objects.get(id=related_budget_id)
-        related_category = CategoryModel.objects.get(id=related_category_id)
+        related_budget = BudgetModel.objects.filter(related_customer_id=related_customer.id).get(id=related_budget_id)
+        related_category = CategoryModel.objects.filter(related_customer_id=related_customer.id).get(id=related_category_id)
 
         operation = OperationModel.objects.create(
             title=title,
@@ -140,19 +206,19 @@ class ORMOperationService(BaseOperationService):
         )
         return operation.to_entity()
 
-    def delete_operation(self, operation_id: int) -> None:
-        OperationModel.objects.get(id=operation_id).delete()
+    def delete_operation(self, operation_id: int, related_customer: Customer) -> None:
+        OperationModel.objects.filter(related_budget__related_customer_id=related_customer.id).get(id=operation_id).delete()
 
     def update_operation(
-        self,
-        operation_id: int,
-        title: Optional[str],
-        operation_type: Optional[str],
-        amount: Optional[Decimal],
-        related_budget_id: Optional[int],
-        related_category_id: Optional[int]
+            self,
+            operation_id: int,
+            title: Optional[str],
+            operation_type: Optional[str],
+            amount: Optional[Decimal],
+            related_category_id: Optional[int],
+            related_customer: Customer
     ) -> Operation:
-        operation = OperationModel.objects.get(id=operation_id)
+        operation = OperationModel.objects.filter(related_budget__related_customer_id=related_customer.id).get(id=operation_id)
 
         if title is not None:
             operation.title = title
@@ -163,11 +229,8 @@ class ORMOperationService(BaseOperationService):
         if amount is not None:
             operation.amount = amount
 
-        if related_budget_id is not None:
-            operation.related_budget = BudgetModel.objects.get(id=related_budget_id)
-
         if related_category_id is not None:
-            operation.related_category = CategoryModel.objects.get(id=related_category_id)
+            operation.related_category = CategoryModel.objects.filter(related_customer_id=related_customer.id).get(id=related_category_id)
 
         operation.save()
         return operation.to_entity()

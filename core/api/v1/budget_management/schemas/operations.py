@@ -1,32 +1,46 @@
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
-from uuid import UUID
 
 from ninja import Schema
 
 from core.apps.budgets.entities.budgets import Budget as BudgetEntity
 from core.apps.budgets.entities.operations import Category as CategoryEntity, Operation as OperationEntity
+from core.apps.customers.entities.customers import Customer as CustomerEntity
+
+
+class CreateCategorySchema(Schema):
+    name: str
 
 
 class CategorySchema(Schema):
     id: int
     name: str
+    related_customer: CustomerEntity
 
     @staticmethod
     def from_entity(entity: CategoryEntity) -> 'CategorySchema':
         return CategorySchema(
             id=entity.id,
             name=entity.name,
+            related_customer=entity.related_customer,
         )
+
+
+class UpdateCategorySchema(Schema):
+    name: Optional[str]
+
+
+class DeleteCategorySchema(Schema):
+    message: str
 
 
 class CreateOperationSchema(Schema):
     title: Optional[str]
     operation_type: str
     amount: Decimal
+    related_category_id: Optional[int]
     related_budget_id: int
-    related_category_id: int
 
 
 class OperationSchema(Schema):
@@ -37,7 +51,7 @@ class OperationSchema(Schema):
     operation_type: str
     amount: Decimal
     related_budget: BudgetEntity
-    related_category: CategoryEntity
+    related_category: Optional[CategoryEntity]
 
     @staticmethod
     def from_entity(entity: OperationEntity) -> 'OperationSchema':
@@ -57,7 +71,6 @@ class UpdateOperationSchema(Schema):
     title: Optional[str] = None
     operation_type: Optional[str] = None
     amount: Optional[Decimal] = None
-    related_budget_id: Optional[int] = None
     related_category_id: Optional[int] = None
 
 

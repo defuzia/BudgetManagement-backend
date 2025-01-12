@@ -28,7 +28,7 @@ This repository contains the backend services for a budget management applicatio
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/budget-management-backend.git
+   git clone https://github.com/defuzia/BudgetManagement-backend.git
    ```
 2. Navigate to the project directory:
    ```bash
@@ -40,7 +40,7 @@ This repository contains the backend services for a budget management applicatio
 
 5. Use `Makefile` commands for further development.
 
-6. (optional but explicit) Run `Makefile` `make app` command to up infrastructure then run `Makefile` `make migrate` to populate DB with tables.
+6. (optional but explicit) Run `Makefile`: `make app` command to up infrastructure then run `Makefile`: `make migrate` to populate DB with tables.
 
 ---
 
@@ -77,15 +77,15 @@ This repository contains the backend services for a budget management applicatio
 ## General URLS
 - `/admin`: Go to admin panel. (before that, create admin user using `Makefile` Django specific commands)
 
-## API Endpoints (NOT FULLY IMPLEMENTED)
+## API Endpoints
 
 ### General
 - `GET /api/ping`: Ping a server.
 - `GET /api/docs`: Go to OpenAPI generated documentation.
 
 ### Authentication
-- `POST /api/v1/customers/auth`: Register a new user and send code to phone number.
-- `POST /api/v1/auth/complete`: Login and receive a UUID token.
+- `POST /api/v1/customers/auth`: Start authentication process: get/crate customer and send code to a phone number.
+- `POST /api/v1/customers/confirm`: Complete authentication process and receive a UUID token.
 
 ### Budgets
 - `GET /api/v1/currencies`: Fetch all available currencies.
@@ -97,11 +97,11 @@ This repository contains the backend services for a budget management applicatio
 - `DELETE /api/v1/budgets/{budget_id}`: Delete specific budget by its id.
 
 ### Budget operations
-- `POST /api/v1/categories`: Create a new category. (NOT IMPLEMENTED)
+- `POST /api/v1/categories`: Create a new category.
 - `GET /api/v1/categories`: Fetch all available categories.
 - `GET /api/v1/categories/{category_id}`: Fetch category by its id.
-- `PUT /api/v1/categories/{category_id}`: Update specific budget by its id. (NOT IMPLEMENTED)
-- `DELETE /api/v1/categories/{category_id}`: Delete specific budget by its id. (NOT IMPLEMENTED)
+- `PUT /api/v1/categories/{category_id}`: Update specific budget by its id.
+- `DELETE /api/v1/categories/{category_id}`: Delete specific budget by its id.
 - `POST /api/v1/operations`: Create a new budget operation.
 - `GET /api/v1/operations`: Fetch all available operations.
 - `GET /api/v1/operations/{category_id}`: Fetch all available operations by their category. (NOT IMPLEMENTED)

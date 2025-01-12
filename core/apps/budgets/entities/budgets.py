@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
-from uuid import UUID
+
+from core.apps.customers.entities.customers import Customer
 
 
 @dataclass
@@ -20,5 +21,4 @@ class Budget:
     title: str
     initial_amount: Decimal
     related_currency: Currency
-    related_user: UUID
-
+    related_customer: Customer
