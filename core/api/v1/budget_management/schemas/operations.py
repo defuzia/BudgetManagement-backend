@@ -15,6 +15,8 @@ class CreateCategorySchema(Schema):
 
 class CategorySchema(Schema):
     id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
     name: str
     related_customer: CustomerEntity
 
@@ -22,6 +24,8 @@ class CategorySchema(Schema):
     def from_entity(entity: CategoryEntity) -> 'CategorySchema':
         return CategorySchema(
             id=entity.id,
+            created_at=entity.created_at,
+            updated_at=entity.updated_at,
             name=entity.name,
             related_customer=entity.related_customer,
         )

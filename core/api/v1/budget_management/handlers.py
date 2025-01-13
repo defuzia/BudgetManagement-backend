@@ -219,7 +219,7 @@ def update_category_handler(
         name=schema.name,
         related_customer=request.auth
     )
-    item = OperationSchema.from_entity(updated_category)
+    item = CategorySchema.from_entity(updated_category)
 
     return ApiResponse(data=DetailResponse(item=item))
 
@@ -235,7 +235,7 @@ def delete_category_handler(
 
     service.delete_category(category_id=category_id, related_customer=request.auth)
 
-    return ApiResponse(data=DeleteOperationSchema(message='Operation deleted successfully.'))
+    return ApiResponse(data=DeleteCategorySchema(message='Category deleted successfully.'))
 
 
 @router.post('operations', response=ApiResponse[DetailResponse[OperationSchema]], auth=TokenAuth())
@@ -308,7 +308,6 @@ def update_operation_handler(
         title=schema.title,
         operation_type=schema.operation_type,
         amount=schema.amount,
-        related_budget_id=schema.related_budget_id,
         related_category_id=schema.related_category_id,
         related_customer=request.auth
     )

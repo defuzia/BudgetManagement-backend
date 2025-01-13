@@ -39,3 +39,12 @@ class ORMCustomerService(BaseCustomerService):
             token=generated_token
         )
         return generated_token
+
+    def update_username(self, username: str, customer: CustomerEntity) -> CustomerEntity:
+        customer = CustomerModel.objects.get(id=customer.id)
+
+        customer.username = username
+        customer.save()
+
+        return customer.to_entity()
+

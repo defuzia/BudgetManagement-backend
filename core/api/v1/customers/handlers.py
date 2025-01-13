@@ -2,10 +2,13 @@ from django.http import HttpRequest
 from ninja import Router
 from ninja.errors import HttpError
 
-from core.api.schemas import ApiResponse
-from core.api.v1.customers.schemas.customers import AuthInSchema, AuthOutSchema, TokenOutSchema, TokenInSchema
+from core.api.schemas import ApiResponse, DetailResponse
+from core.api.v1.budget_management.handlers import TokenAuth
+from core.api.v1.customers.schemas.customers import AuthInSchema, AuthOutSchema, TokenOutSchema, TokenInSchema, \
+    CustomerSchema, UpdateCustomerSchema
 from core.apps.common.exceptions import ServiceException
 from core.apps.customers.services.auth import BaseAuthService
+from core.apps.customers.services.customers import BaseCustomerService
 from core.project.ioc_containers import get_ioc_container
 
 router = Router(tags=['Customers'])
@@ -45,3 +48,35 @@ def get_token_handler(
         )
 
     return ApiResponse(data=TokenOutSchema(token=token))
+
+
+@router.get('profile', response=ApiResponse[DetailResponse[CustomerSchema]], auth=TokenAuth())
+def get_customer_handler(
+        request: HttpRequest,
+) -> ApiResponse[DetailResponse[CustomerSchema]]:
+
+    ioc_container = get_ioc_container()
+    service = ioc_container.resolve(BaseCustomerService)
+
+    customer = service.get(phone=request.auth.phone)
+    item = CustomerSchema.from_entity(customer)
+
+    return ApiResponse(data=DetailResponse(item=item))
+
+
+@router.put('profile', response=ApiResponse[DetailResponse[CustomerSchema]], auth=TokenAuth())
+def update_budget_handler(
+        request: HttpRequest,
+        schema: UpdateCustomerSchema
+) -> ApiResponse[DetailResponse[CustomerSchema]]:
+
+    ioc_container = get_ioc_container()
+    service = ioc_container.resolve(BaseCustomerService)
+
+    updated_customer = service.update_username(
+        username=schema.username,
+        customer=request.auth
+    )
+    item = CustomerSchema.from_entity(updated_customer)
+
+    return ApiResponse(data=DetailResponse(item=item))

@@ -9,6 +9,8 @@ from core.apps.customers.entities.customers import Customer
 @dataclass
 class Category:
     id: int
+    created_at: datetime
+    updated_at: datetime
     name: str
     related_customer: Customer
 

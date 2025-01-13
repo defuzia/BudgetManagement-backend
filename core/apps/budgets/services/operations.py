@@ -91,7 +91,11 @@ class ORMCategoryService(BaseCategoryService):
             name: str,
             related_customer: Customer
     ) -> Category:
-        return Category(name=name, related_customer=related_customer)
+        category = CategoryModel.objects.create(
+            name=name,
+            related_customer_id=related_customer.id
+        )
+        return category.to_entity()
 
     def delete_category(self, category_id: int, related_customer: Customer) -> None:
         CategoryModel.objects.filter(related_customer_id=related_customer.id).get(id=category_id).delete()
@@ -102,7 +106,13 @@ class ORMCategoryService(BaseCategoryService):
             name: Optional[str],
             related_customer: Customer
     ) -> Category:
-        return Category(id=category_id, name=name, related_customer=related_customer)
+        category = CategoryModel.objects.filter(related_customer_id=related_customer.id).get(id=category_id)
+
+        if name is not None:
+            category.name = name
+
+        category.save()
+        return category.to_entity()
 
 
 class BaseOperationService(ABC):
@@ -171,7 +181,7 @@ class ORMOperationService(BaseOperationService):
             related_customer: Customer
     ) -> Iterable[Operation]:
         query = self._build_operation_query(filters)
-        qs = OperationModel.objects.filter(related_customer_id=related_customer.id).filter(query)[
+        qs = OperationModel.objects.filter(related_budget__related_customer_id=related_customer.id).filter(query)[
              pagination.offset:pagination.offset + pagination.limit
         ]
 
@@ -180,10 +190,10 @@ class ORMOperationService(BaseOperationService):
     def get_operation_count(self, filters: OperationFilters, related_customer: Customer) -> int:
         query = self._build_operation_query(filters)
 
-        return OperationModel.objects.filter(related_customer_id=related_customer.id).filter(query).count()
+        return OperationModel.objects.filter(related_budget__related_customer_id=related_customer.id).filter(query).count()
 
     def get_operation_by_id(self, operation_id: int, related_customer: Customer) -> Operation:
-        return OperationModel.objects.filter(related_customer_id=related_customer.id).get(id=operation_id).to_entity()
+        return OperationModel.objects.filter(related_budget__related_customer_id=related_customer.id).get(id=operation_id).to_entity()
 
     def create_operation(
             self,

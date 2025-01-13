@@ -87,6 +87,10 @@ This repository contains the backend services for a budget management applicatio
 - `POST /api/v1/customers/auth`: Start authentication process: get/crate customer and send code to a phone number.
 - `POST /api/v1/customers/confirm`: Complete authentication process and receive a UUID token.
 
+### Customer related
+- `GET /api/v1/customers/profile`: Fetch customer info.
+- `PUT /api/v1/customers/profile`: Update customer info.
+
 ### Budgets
 - `GET /api/v1/currencies`: Fetch all available currencies.
 - `GET /api/v1/currencies/{short_name}`: Fetch specific currency by its short_name.
@@ -104,7 +108,6 @@ This repository contains the backend services for a budget management applicatio
 - `DELETE /api/v1/categories/{category_id}`: Delete specific budget by its id.
 - `POST /api/v1/operations`: Create a new budget operation.
 - `GET /api/v1/operations`: Fetch all available operations.
-- `GET /api/v1/operations/{category_id}`: Fetch all available operations by their category. (NOT IMPLEMENTED)
 - `GET /api/v1/operations/{operation_id}`: Fetch specific operation by its id.
 - `PUT /api/v1/categories/{category_id}`: Update specific operation by its id.
 - `DELETE /api/v1/categories/{category_id}`: Delete specific operation by its id.

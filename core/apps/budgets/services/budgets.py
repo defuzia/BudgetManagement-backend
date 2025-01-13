@@ -143,7 +143,7 @@ class ORMBudgetService(BaseBudgetService):
             title=title,
             initial_amount=initial_amount,
             related_currency=related_currency,
-            related_customer=related_customer.id
+            related_customer_id=related_customer.id
         )
         return budget.to_entity()
 

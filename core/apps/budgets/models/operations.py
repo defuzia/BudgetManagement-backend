@@ -7,7 +7,7 @@ from core.apps.budgets.entities.operations import Category as CategoryEntity, Op
 from core.apps.customers.models import Customer
 
 
-class Category(models.Model):
+class Category(TimestampedBaseModel):
     name = models.CharField(
         verbose_name=_('Category name'),
         max_length=255,
@@ -22,6 +22,8 @@ class Category(models.Model):
     def to_entity(self) -> CategoryEntity:
         return CategoryEntity(
             id=self.id,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
             name=self.name,
             related_customer=self.related_customer.to_entity(),
         )
