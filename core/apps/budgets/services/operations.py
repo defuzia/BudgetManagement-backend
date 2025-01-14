@@ -202,7 +202,7 @@ class ORMOperationService(BaseOperationService):
             amount: Decimal,
             related_budget_id: int,
             related_customer: Customer,
-            related_category_id: Optional[int] = None
+            related_category_id: Optional[int]
     ) -> Operation:
         related_budget = BudgetModel.objects.filter(related_customer_id=related_customer.id).get(id=related_budget_id)
 
