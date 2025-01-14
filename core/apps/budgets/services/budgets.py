@@ -144,7 +144,9 @@ class ORMBudgetService(BaseBudgetService):
             related_customer_id=related_customer.id,
             id=budget_id
         )
-        qs = budget.operations.filter(query)[pagination.offset:pagination.offset + pagination.limit]
+        qs = budget.operations.filter(query).order_by('-created_at', '-updated_at')[
+             pagination.offset:pagination.offset + pagination.limit
+        ]
 
         return budget.to_entity(), [budget_operation.to_entity() for budget_operation in qs]
 
