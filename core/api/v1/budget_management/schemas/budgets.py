@@ -5,6 +5,7 @@ from typing import Optional
 from ninja import Schema
 
 from core.apps.budgets.entities.budgets import Currency as CurrencyEntity, Budget as BudgetEntity
+from core.apps.budgets.entities.operations import Operation as OperationEntity
 from core.apps.customers.entities.customers import Customer as CustomerEntity
 
 
@@ -50,6 +51,11 @@ class BudgetSchema(Schema):
             related_currency=entity.related_currency,
             related_customer=entity.related_customer
         )
+
+
+class BudgetOperationSchema(Schema):
+    related_budget: BudgetEntity
+    related_operations: list[OperationEntity]
 
 
 class UpdateBudgetSchema(Schema):

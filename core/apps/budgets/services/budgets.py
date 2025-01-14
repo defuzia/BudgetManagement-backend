@@ -7,7 +7,7 @@ from django.db.models import Q
 from core.api.filters import PaginationIn
 from core.api.v1.budget_management.filters import CurrencyFilters, BudgetFilters
 from core.apps.budgets.entities.budgets import Currency, Budget
-
+from core.apps.budgets.entities.operations import Operation
 
 from core.apps.budgets.models.budgets import (
     Currency as CurrencyModel,
@@ -106,6 +106,14 @@ class ORMBudgetService(BaseBudgetService):
 
         return query
 
+    def _build_budget_operation_query(self, filters: BudgetFilters) -> Q:
+        query = Q()
+
+        if filters.search is not None:
+            query &= Q(title__icontains=filters.search) | Q(operation_type__iexact=filters.search)
+
+        return query
+
     def get_budget_list(
             self,
             filters: BudgetFilters,
@@ -123,6 +131,35 @@ class ORMBudgetService(BaseBudgetService):
         query = self._build_budget_query(filters)
 
         return BudgetModel.objects.filter(related_customer_id=related_customer.id).filter(query).count()
+
+    def get_budget_operation_list(
+            self,
+            filters: BudgetFilters,
+            pagination: PaginationIn,
+            budget_id: int,
+            related_customer: Customer
+    ) -> tuple[Budget, Iterable[Operation]]:
+        query = self._build_budget_operation_query(filters)
+        budget = BudgetModel.objects.get(
+            related_customer_id=related_customer.id,
+            id=budget_id
+        )
+        qs = budget.operations.filter(query)[pagination.offset:pagination.offset + pagination.limit]
+
+        return budget.to_entity(), [budget_operation.to_entity() for budget_operation in qs]
+
+    def get_budget_operation_count(
+            self,
+            filters: BudgetFilters,
+            budget_id: int,
+            related_customer: Customer
+    ) -> int:
+        query = self._build_budget_operation_query(filters)
+
+        return BudgetModel.objects.get(
+            related_customer_id=related_customer.id,
+            id=budget_id
+        ).operations.filter(query).count()
 
     def get_budget_by_id(self, budget_id: int, related_customer: Customer) -> Budget:
         return BudgetModel.objects.filter(related_customer_id=related_customer.id).get(id=budget_id).to_entity()

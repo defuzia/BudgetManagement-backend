@@ -7,7 +7,7 @@ from core.api.schemas import ApiResponse, ListPaginatedResponse, DetailResponse,
 from core.api.v1.budget_management.filters import CurrencyFilters, BudgetFilters, CategoryFilters, OperationFilters
 
 from core.api.v1.budget_management.schemas.budgets import (
-    CurrencySchema, BudgetSchema, CreateBudgetSchema, UpdateBudgetSchema, DeleteBudgetSchema
+    CurrencySchema, BudgetSchema, CreateBudgetSchema, UpdateBudgetSchema, DeleteBudgetSchema, BudgetOperationSchema
 )
 from core.api.v1.budget_management.schemas.operations import (
     CategorySchema, OperationSchema, CreateOperationSchema, UpdateOperationSchema, DeleteOperationSchema,
@@ -116,6 +116,37 @@ def get_budget_handler(
     item = BudgetSchema.from_entity(budget)
 
     return ApiResponse(data=DetailResponse(item=item))
+
+
+@router.get('budgets/{budget_id}/operations', response=ApiResponse[ListPaginatedResponse[BudgetOperationSchema]], auth=TokenAuth())
+def get_budget_operation_list_handler(
+        request: HttpRequest,
+        filters: Query[BudgetFilters],
+        pagination_in: Query[PaginationIn],
+        budget_id: int
+) -> ApiResponse[ListPaginatedResponse[BudgetOperationSchema]]:
+    ioc_container = get_ioc_container()
+    service = ioc_container.resolve(BaseBudgetService)
+
+    budget, budget_operation_list = service.get_budget_operation_list(
+        filters=filters,
+        pagination=pagination_in,
+        budget_id=budget_id,
+        related_customer=request.auth
+    )
+    budget_operation_count = service.get_budget_operation_count(
+        filters=filters,
+        budget_id=budget_id,
+        related_customer=request.auth
+    )
+    pagination_out = PaginationOut(offset=pagination_in.limit, limit=pagination_in.limit, total=budget_operation_count)
+
+    items = [{
+        "related_budget": budget,
+        "related_operations": budget_operation_list
+    }]
+
+    return ApiResponse(data=ListPaginatedResponse(items=items, pagination=pagination_out))
 
 
 @router.put('budgets/{budget_id}', response=ApiResponse[DetailResponse[BudgetSchema]], auth=TokenAuth())
