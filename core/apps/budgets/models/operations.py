@@ -80,7 +80,7 @@ class Operation(TimestampedBaseModel):
             operation_type=self.operation_type,
             amount=self.amount,
             related_budget=self.related_budget.to_entity(),
-            related_category=self.related_category.to_entity(),
+            related_category=self.related_category.to_entity() if self.related_category else None,
         )
 
     def __str__(self):

@@ -201,18 +201,17 @@ class ORMOperationService(BaseOperationService):
             operation_type: str,
             amount: Decimal,
             related_budget_id: int,
-            related_category_id: int,
-            related_customer: Customer
+            related_customer: Customer,
+            related_category_id: Optional[int] = None
     ) -> Operation:
         related_budget = BudgetModel.objects.filter(related_customer_id=related_customer.id).get(id=related_budget_id)
-        related_category = CategoryModel.objects.filter(related_customer_id=related_customer.id).get(id=related_category_id)
 
         operation = OperationModel.objects.create(
             title=title,
             operation_type=operation_type,
             amount=amount,
             related_budget=related_budget,
-            related_category=related_category
+            related_category_id=related_category_id
         )
         return operation.to_entity()
 
