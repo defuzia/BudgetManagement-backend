@@ -24,12 +24,10 @@ class DjangoCacheCodeService(BaseCodeService):
 
         cache.set(customer.phone, code)
 
-        # return code
-        return '000000'
+        return code
 
     def validate_code(self, code: str, customer: CustomerEntity) -> None:
-        # cached_code = cache.get(customer.phone)
-        cached_code = '000000'
+        cached_code = cache.get(customer.phone)
 
         if cached_code is None:
             raise CodeNotFoundException(code=code)

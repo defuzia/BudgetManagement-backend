@@ -10,7 +10,9 @@ from core.apps.budgets.services.operations import (
 from core.apps.customers.services.auth import BaseAuthService, AuthService
 from core.apps.customers.services.codes import BaseCodeService, DjangoCacheCodeService
 from core.apps.customers.services.customers import BaseCustomerService, ORMCustomerService
-from core.apps.customers.services.senders import BaseSenderService, DummySenderService
+from core.apps.customers.services.senders import (
+    BaseSenderService, DummySenderService, SMSVonageSenderService
+)
 
 
 @lru_cache(maxsize=1)
