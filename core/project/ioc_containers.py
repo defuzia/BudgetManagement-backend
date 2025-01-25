@@ -31,7 +31,7 @@ def _initialize_ioc_container() -> punq.Container:
 
     ioc_container.register(BaseCustomerService, ORMCustomerService)
     ioc_container.register(BaseCodeService, DjangoCacheCodeService)
-    ioc_container.register(BaseSenderService, DummySenderService)
+    ioc_container.register(BaseSenderService, SMSVonageSenderService)
     ioc_container.register(BaseAuthService, AuthService)
 
     return ioc_container

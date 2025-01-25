@@ -20,8 +20,7 @@ class BaseCodeService(ABC):
 class DjangoCacheCodeService(BaseCodeService):
     def generate_code(self, customer: CustomerEntity) -> str:
         code_length = 6
-        # code = ''.join([f'{randint(0, 9)}' for _ in range(code_length)])
-        code = '000000'
+        code = ''.join([f'{randint(0, 9)}' for _ in range(code_length)])
         cache.set(customer.phone, code)
 
         return code
