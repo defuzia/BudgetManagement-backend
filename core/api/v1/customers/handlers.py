@@ -2,8 +2,8 @@ from django.http import HttpRequest
 from ninja import Router
 from ninja.errors import HttpError
 
+from core.api.auth import TokenAuth
 from core.api.schemas import ApiResponse, DetailResponse
-from core.api.v1.budget_management.handlers import TokenAuth
 from core.api.v1.customers.schemas.customers import AuthInSchema, AuthOutSchema, TokenOutSchema, TokenInSchema, \
     CustomerSchema, UpdateCustomerSchema
 from core.apps.common.exceptions import ServiceException

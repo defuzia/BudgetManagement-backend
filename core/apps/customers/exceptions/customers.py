@@ -12,8 +12,7 @@ class CustomerException(ServiceException):
 
 @dataclass(eq=False)
 class CustomerNotFoundException(CustomerException):
-    code: str
 
     @property
     def message(self):
-        return 'Code not found.'
+        return 'Customer not found.'

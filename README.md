@@ -97,7 +97,7 @@ This repository contains the backend services for a budget management applicatio
 - `POST /api/v1/budgets`: Create a new budget.
 - `GET /api/v1/budgets`: Fetch all budgets.
 - `GET /api/v1/budgets/{budget_id}`: Fetch specific budget by its id.
-- `GET /api/v1/budgets/{budget_id}/operations`: Fetch specific budget operations by its id. (NOT IMPLEMENTED)
+- `GET /api/v1/budgets/{budget_id}/operations`: Fetch specific budget operations by its id.
 - `PUT /api/v1/budgets/{budget_id}`: Update specific budget by its id.
 - `DELETE /api/v1/budgets/{budget_id}`: Delete specific budget by its id.
 

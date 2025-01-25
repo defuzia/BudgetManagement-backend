@@ -1,7 +1,7 @@
 from django.http import HttpRequest
 from ninja import Router, Query
-from ninja.security import HttpBearer
 
+from core.api.auth import TokenAuth
 from core.api.filters import PaginationIn
 from core.api.schemas import ApiResponse, ListPaginatedResponse, DetailResponse, PaginationOut
 from core.api.v1.budget_management.filters import CurrencyFilters, BudgetFilters, CategoryFilters, OperationFilters
@@ -17,17 +17,6 @@ from core.project.ioc_containers import get_ioc_container
 
 from core.apps.budgets.services.budgets import BaseCurrencyService, BaseBudgetService
 from core.apps.budgets.services.operations import BaseCategoryService, BaseOperationService
-from core.apps.customers.models import Customer
-
-
-class TokenAuth(HttpBearer):
-    def authenticate(self, request, token: str):
-        try:
-            customer = Customer.objects.get(token=token)
-            return customer.to_entity()
-        except Customer.DoesNotExist:
-            return None
-
 
 router = Router(tags=['Budget managing'])
 
