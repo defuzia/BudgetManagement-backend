@@ -10,6 +10,7 @@
 This app solves the problem of budget management. It allows users to keep track of their expenses and income, as well as track their spending activity.
 
 **FrontEnd** can be found [here](https://github.com/MrQuackDuck/BudgetManagerClient.git).
+
 ---
 
 ## Features
