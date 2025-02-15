@@ -1,7 +1,15 @@
-# Budget Management Backend
+# Budget Manager
 
-This repository contains the backend services for a budget management application. It provides RESTful APIs to handle user authentication, budget tracking, and expense management.
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-gray?color=0B1121&logo=python" /></a>
+<a href="https://python-poetry.org/"><img src="https://img.shields.io/badge/Poetry-gray?color=0B1121&logo=poetry" /></a>
+<a href="https://docs.djangoproject.com/en/5.1/"><img src="https://img.shields.io/badge/Django-gray?color=0B1121&logo=django" /></a>
+<a href="https://django-ninja.dev/"><img src="https://img.shields.io/badge/DjangoNinja-gray?color=0B1121&logo=django" /></a>
+<a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-gray?color=0B1121&logo=postgresql" /></a>
+<a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-gray?color=0B1121&logo=docker" /></a>
 
+This app solves the problem of budget management. It allows users to keep track of their expenses and income, as well as track their spending activity.
+
+**FrontEnd** can be found [here](https://github.com/MrQuackDuck/BudgetManagerClient.git).
 ---
 
 ## Features
